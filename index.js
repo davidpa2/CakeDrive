@@ -5,7 +5,10 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 let roadY = 0;
+let roadWidth = 240;
+
 let curveOffset = 0;
+let curveAmplitude = 50;
 
 gameLoop();
 var game = setInterval(gameLoop, 15)
@@ -19,9 +22,25 @@ function drawRoad() {
     
     for (let y = 0; y < canvas.height; y += 10) {
         let curve = calculateCurve(y); // Curve movement
-        let roadWidth = 220;
 
-        let leftX = 115 + curve;
+        // let i = random(0, 100000);
+        let i = 0
+
+        let leftX = 0
+        switch (i) {
+            case 1:
+                console.log('');
+                
+                leftX = 115 + curve - 40;
+                break;
+            case 2:
+                leftX = 115 + curve - 20;
+                break;
+        
+            default:
+                leftX = 115 + curve - 30;
+                break;
+        }
         let rightX = leftX + roadWidth;
 
         ctx.beginPath();
@@ -37,7 +56,7 @@ function drawRoad() {
     ctx.fillStyle = "white";
     for (let y = 0; y < canvas.height; y += 50) { // The y increment is for the lines separation
         let curve = calculateCurve(y);
-        let centerX = 225 + curve;
+        let centerX = 225 + curve - 16; // Increasing 16 to center the line
         ctx.fillRect(centerX - 5, (y + roadY - 30) % canvas.height, 8, 15);
     }
 }
@@ -49,7 +68,7 @@ function update() {
 }
 
 function calculateCurve(y) {
-    return Math.sin((y + curveOffset) * 0.01) * 50;
+    return Math.sin((y + curveOffset) * 0.01) * curveAmplitude;
 }
 
 function gameLoop() {
@@ -59,3 +78,7 @@ function gameLoop() {
     // requestAnimationFrame(gameLoop);
 }
 
+function random(min, max) {
+    const num = Math.floor(Math.random() * (max - min + 1)) + min;
+    return num;
+}
