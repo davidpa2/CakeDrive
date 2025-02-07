@@ -1,0 +1,11 @@
+body {
+    overflow: hidden;
+    height: inherit;
+    resize: none;
+    margin: 0;
+}
+
+canvas {
+    cursor: crosshair;
+    display: block;
+}
