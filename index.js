@@ -12,13 +12,88 @@ let curveAmplitude = 40;
 let time = 0; //Progress game time
 
 // car dimension
-var car = new Car(canvas.width / 2 - (100 / 2), canvas.height / 4, 13, 100)
+var car = new Car(canvas.width / 2 - (100 / 2), canvas.height / 1.2, 4, 70, 120)
 
 var carImg = new Image();
 carImg.src = "Car.png";
 
+
+let movingLeft = false;
+let movingRight = false;
+
+var showAdvice = true;
+let theEnd = false;
+
 gameLoop();
-var game = setInterval(gameLoop, 15)
+var game = setInterval(gameLoop, 15);
+
+
+// KeyEvents
+(function (element, events) {
+    events.forEach(e => element.addEventListener(e, arrowEvent, false))
+})(document, ["keydown", "keyup"])
+function arrowEvent(e) {
+    switch (e.keyCode) {
+        case 37: // Left arrow
+            if (e.type == "keydown") {
+                movingLeft = true;
+            } else if (e.type == "keyup") {
+                movingLeft = false;
+            }
+            break;
+        case 39: // Right arrow
+            if (e.type == "keydown") {
+                movingRight = true;
+            } else if (e.type == "keyup") {
+                movingRight = false;
+            }
+            break;
+    }
+    if (theEnd) {
+        window.location.reload();
+    }
+}
+
+// Pointer Events
+(function (element, events) {
+    events.forEach(e => element.addEventListener(e, clickEvent, false))
+})(document, ["pointerdown", "pointerup"])
+function clickEvent(e) {
+    switch (e.type) {
+        case "pointerdown":
+            if (e.x < canvas.width / 2) {
+                if (car.x > 10) {
+                    movingLeft = true;
+                }
+            } else {
+                if (car.x + car.sizeX + 10 < canvas.width) {
+                    movingRight = true;
+                }
+            }
+            break;
+        case "pointerup":
+            movingRight = false;
+            movingLeft = false;
+            break;
+    }
+    if (theEnd) {
+        window.location.reload();
+    }
+}
+
+function moving() {
+    if (movingLeft) {
+        if (car.x > 10) {
+            car.x -= car.speed;
+        }
+    }
+    if (movingRight) {
+        if (car.x + car.sizeX + 10 < canvas.width) {
+            car.x += car.speed;
+        }
+    }
+}
+
 
 
 function drawRoad() {
@@ -54,17 +129,17 @@ function drawRoad() {
 }
 
 /**
- * Draw Plane
+ * Draw car
  */
 function drawCar() {
     // if (movingLeft) {
-    //     planeImg.src = "DaniLeft.png"
+    //     carImg.src = "DaniLeft.png"
     // } else if (movingRight) {
-    //     planeImg.src = "DaniRight.png"
+    //     carImg.src = "DaniRight.png"
     // }
 
     ctx.beginPath();
-    ctx.drawImage(carImg, car.x, car.y, car.size, car.size);
+    ctx.drawImage(carImg, car.x, car.y, car.sizeX, car.sizeY);
     ctx.closePath();
 }
 
@@ -83,12 +158,15 @@ function calculateCurve(y) {
 function updateCurveAmplitude() {
     //Add 30 so that the minimum amplitude is not too small
     curveAmplitude = 30 + Math.sin(time * 0.005) * 20; // Modify the product of time to change the movement speed
-    console.log(curveAmplitude);
+    // console.log(curveAmplitude);
     time++;
 }
 
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    moving()
+
     drawRoad();
     drawCar();
     update();

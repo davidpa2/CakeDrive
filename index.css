@@ -6,6 +6,7 @@ body {
 }
 
 canvas {
+    min-width: 100%;
     cursor: crosshair;
     display: block;
 }
