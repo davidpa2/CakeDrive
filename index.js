@@ -12,7 +12,7 @@ let curveAmplitude = 40;
 let time = 0; //Progress game time
 
 // car dimension
-var car = new Car(canvas.width / 2 - (100 / 2), canvas.height / 1.2, 4, 70, 120)
+var car = new Car(canvas.width / 2 - (100 / 2), canvas.height / 1.35, 4, 60, 100, 15)
 
 var carImg = new Image();
 carImg.src = "Car.png";
@@ -83,12 +83,12 @@ function clickEvent(e) {
 
 function moving() {
     if (movingLeft) {
-        if (car.x > 10) {
+        if (car.x > 0) {
             car.x -= car.speed;
         }
     }
     if (movingRight) {
-        if (car.x + car.sizeX + 10 < canvas.width) {
+        if (car.x + car.sizeX < canvas.width) {
             car.x += car.speed;
         }
     }
@@ -101,7 +101,7 @@ function drawRoad() {
     ctx.fillRect(0, 0, canvas.width, canvas.height); // Green background (grass)
 
     ctx.fillStyle = "gray";
-    
+
     updateCurveAmplitude();
 
     for (let y = 0; y < canvas.height; y += 10) {
@@ -132,14 +132,28 @@ function drawRoad() {
  * Draw car
  */
 function drawCar() {
-    // if (movingLeft) {
-    //     carImg.src = "DaniLeft.png"
-    // } else if (movingRight) {
-    //     carImg.src = "DaniRight.png"
-    // }
+    if (movingRight) {
+        car.rotationAngle += (15 - car.rotationAngle) * 0.1; // Ease up rotation to 15°
+    } else if (movingLeft) {
+        car.rotationAngle += (-15 - car.rotationAngle) * 0.1; // Ease up rotation to -15°
+    } else {
+        car.rotationAngle += (0 - car.rotationAngle) * 0.1; // Return slowly to 0° when no moving
+    }
 
     ctx.beginPath();
-    ctx.drawImage(carImg, car.x, car.y, car.sizeX, car.sizeY);
+    ctx.save(); // Save the state of canvas
+    
+    ctx.translate(car.x + car.sizeX / 2, car.y + car.sizeY / 2); // Traslate the origin of rotation to the center of the car
+    ctx.rotate((car.rotationAngle * Math.PI) / 180);
+
+    // Draw centered car
+    ctx.drawImage(carImg, -car.sizeX / 2, -car.sizeY / 2, car.sizeX, car.sizeY); 
+
+    //Cakes counter at car
+    ctx.font = "25px Times";
+    ctx.fillText("35", -car.sizeX / 4.5, car.sizeY / 3.8);
+
+    ctx.restore(); // Restore canvas rotation
     ctx.closePath();
 }
 
