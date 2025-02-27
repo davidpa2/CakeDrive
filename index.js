@@ -1,5 +1,5 @@
 const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
+const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -155,6 +155,23 @@ function drawCar() {
 
     ctx.restore(); // Restore canvas rotation
     ctx.closePath();
+
+    isOffRoad();    
+}
+
+function isOffRoad() {
+    // Draw a square to know what is the checking point
+    // ctx.beginPath();
+    // ctx.fillStyle = "blue";
+    // ctx.fillRect(car.x + car.sizeX / 2 - 20, car.y + car.sizeY , 10, 10);
+    // ctx.closePath();
+    
+    // Get the color of the background where there is exactly the car
+    let pixelData = ctx.getImageData(car.x + car.sizeX - 30, car.y + car.sizeY, 1, 1).data;
+    let [r, g, b] = [pixelData[0], pixelData[1], pixelData[2]]; // Get RBG color
+    // console.log(r,g,b);
+    
+    return !(r === 128 && g === 128 && b === 128); // !Gray color 
 }
 
 
@@ -173,7 +190,6 @@ function updateCurveAmplitude() {
     //Add 30 so that the minimum amplitude is not too small
     curveAmplitude = 30 + Math.sin(time * 0.005) * 20; // Modify the product of time to change the movement speed
     // console.log(curveAmplitude);
-    time++;
 }
 
 function gameLoop() {
@@ -185,6 +201,8 @@ function gameLoop() {
     drawCar();
     update();
     // requestAnimationFrame(gameLoop);
+
+    time++;
 }
 
 function random(min, max) {
