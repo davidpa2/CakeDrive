@@ -12,11 +12,15 @@ let curveAmplitude = 40;
 let time = 0; //Progress game time
 
 // car dimension
-var car = new Car(canvas.width / 2 - (100 / 2), canvas.height / 1.35, 4, 60, 100, 15)
+var car = new Car(canvas.width / 2 - 20, canvas.height / 1.35, 4, 4, 60, 100, 15)
 
 var carImg = new Image();
 carImg.src = "Car.png";
 
+let offRoadTime = 0; // Count if time off road
+let inRoadTime = 0; // Count if time in road
+const maxOffRoadTime = 3; // Allowed seconds off road
+const penaltySpeed = 0.8; // If car is off road, it will be applyed
 
 let movingLeft = false;
 let movingRight = false;
@@ -107,9 +111,9 @@ function drawRoad() {
     for (let y = 0; y < canvas.height; y += 10) {
         let curve = calculateCurve(y); // Curve movement
 
-        let leftX = 115 + curve - 30;
+        let leftX = 115 + curve - 50;
         let rightX = leftX + roadWidth;
-        // console.log(leftX);
+
         ctx.beginPath();
         ctx.moveTo(leftX, y);
         ctx.lineTo(rightX, y);
@@ -124,7 +128,7 @@ function drawRoad() {
     for (let y = 0; y < canvas.height; y += 50) { // The y increment is for the lines separation
         let curve = calculateCurve(y);
         let centerX = 225 + curve;
-        ctx.fillRect(centerX - 5, (y + roadY - 30) % canvas.height, 8, 15);
+        ctx.fillRect(centerX - 20, (y + roadY - 30) % canvas.height, 8, 15);
     }
 }
 
@@ -132,6 +136,7 @@ function drawRoad() {
  * Draw car
  */
 function drawCar() {
+    // Calculate Rotation Angle
     if (movingRight) {
         car.rotationAngle += (15 - car.rotationAngle) * 0.1; // Ease up rotation to 15°
     } else if (movingLeft) {
@@ -156,22 +161,39 @@ function drawCar() {
     ctx.restore(); // Restore canvas rotation
     ctx.closePath();
 
-    isOffRoad();    
+    // Check if it's off road
+    if (isOffRoad()) {
+        offRoadTime += 1 / 60;
+
+        if (car.speed > 1.5) { // Car speed can't be lower than 1.5
+            car.speed *= penaltySpeed; //Reduce speed progressively
+        }
+
+        inRoadTime = 0;
+    } else {        
+        inRoadTime += 1 / 60;
+        
+        // If the car is again in road and it was recently off road
+        if (inRoadTime > 0.5 && offRoadTime > 0) {
+            car.speed = car.originalSpeed;
+            offRoadTime = 0; //Reset off road time
+        }
+    }
 }
 
 function isOffRoad() {
-    // Draw a square to know what is the checking point
+    // Draw a square to know where is the checking point
     // ctx.beginPath();
     // ctx.fillStyle = "blue";
     // ctx.fillRect(car.x + car.sizeX / 2 - 20, car.y + car.sizeY , 10, 10);
     // ctx.closePath();
     
     // Get the color of the background where there is exactly the car
-    let pixelData = ctx.getImageData(car.x + car.sizeX - 30, car.y + car.sizeY, 1, 1).data;
+    let pixelData = ctx.getImageData(parseInt(car.x + car.sizeX - 30), parseInt(car.y + car.sizeY), 1, 1).data;
     let [r, g, b] = [pixelData[0], pixelData[1], pixelData[2]]; // Get RBG color
-    // console.log(r,g,b);
     
-    return !(r === 128 && g === 128 && b === 128); // !Gray color 
+    return (r === 0 && g === 128 && b === 0); // Is green color?
+    // return !(r === 128 && g === 128 && b === 128); // !Gray color 
 }
 
 
