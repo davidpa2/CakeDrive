@@ -275,6 +275,18 @@ function updateCurveAmplitude() {
     // console.log(curveAmplitude);
 }
 
+
+function drawCakeCounter() {
+    ctx.beginPath();
+    ctx.font = "25px Times";
+    ctx.textAlign = "left"
+    ctx.fillStyle = "white";
+    ctx.fillText("Tartas recogidas: " + eatenCakes, 20, 35);
+    ctx.closePath();
+}
+
+
+
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -283,6 +295,8 @@ function gameLoop() {
     drawRoad();
     drawCar();
     drawCakes();
+
+    drawCakeCounter();
 
     update();
     // requestAnimationFrame(gameLoop);
