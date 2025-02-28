@@ -14,13 +14,24 @@ let time = 0; //Progress game time
 // car dimension
 var car = new Car(canvas.width / 2 - 20, canvas.height / 1.35, 4, 4, 60, 100, 15)
 
+// Images
 var carImg = new Image();
 carImg.src = "Car.png";
+var cakeImg = new Image();
+cakeImg.src = "cake.png";
+//---------------
 
 let offRoadTime = 0; // Count if time off road
 let inRoadTime = 0; // Count if time in road
 const maxOffRoadTime = 3; // Allowed seconds off road
 const penaltySpeed = 0.8; // If car is off road, it will be applyed
+
+var cakes = new Map();
+var cakeIdGenerator = 0;
+var generateCakeChance = 20;
+var eatenCakes = 0;
+var cakesToEat = 35;
+var cakeSize = 40;
 
 let movingLeft = false;
 let movingRight = false;
@@ -197,6 +208,31 @@ function isOffRoad() {
 }
 
 
+function drawCakes() {
+    for (const [key, cake] of cakes) {
+        ctx.beginPath();
+        ctx.drawImage(cakeImg, cake.x, cake.y, cake.size, cake.size);
+        ctx.closePath();
+        cake.y += cake.speed // Increase its Y position to rise the cake
+
+        // If the cake beats the bottom bound, delete it
+        if (cake.y > canvas.height) {
+            cakes.delete(key);
+        }
+    }
+
+    // Generate a cake
+    if (generateCakeChance > random(0, 10000)) {
+        let cake = new Cake(random(0, canvas.width - 220), 0, random(2, 5), cakeSize);
+        cakes.set(cakeIdGenerator, cake);
+
+        cakeIdGenerator++;
+    }
+}
+
+
+
+
 function update() {
     roadY += 2;
     curveOffset += 2; // Curve speed
@@ -221,6 +257,8 @@ function gameLoop() {
 
     drawRoad();
     drawCar();
+    drawCakes();
+
     update();
     // requestAnimationFrame(gameLoop);
 
