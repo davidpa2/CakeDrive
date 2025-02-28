@@ -28,10 +28,10 @@ const penaltySpeed = 0.8; // If car is off road, it will be applyed
 
 var cakes = new Map();
 var cakeIdGenerator = 0;
-var generateCakeChance = 20;
+var generateCakeChance = 25;
 var eatenCakes = 0;
-var cakesToEat = 35;
-var cakeSize = 40;
+var cakesToEat = 36;
+var cakeSize = 35;
 
 let movingLeft = false;
 let movingRight = false;
@@ -167,7 +167,8 @@ function drawCar() {
 
     //Cakes counter at car
     ctx.font = "25px Times";
-    ctx.fillText("35", -car.sizeX / 4.5, car.sizeY / 3.8);
+    ctx.textAlign = "center"
+    ctx.fillText(eatenCakes, -car.sizeX / 53, car.sizeY / 3.8);
 
     ctx.restore(); // Restore canvas rotation
     ctx.closePath();
@@ -219,6 +220,13 @@ function drawCakes() {
         if (cake.y > canvas.height) {
             cakes.delete(key);
         }
+
+        if (checkImpact(cake)) {
+            showAdvice = false;
+            cakes.delete(key)
+            eatenCakes++;
+            console.log(eatenCakes);
+        }
     }
 
     // Generate a cake
@@ -230,6 +238,21 @@ function drawCakes() {
     }
 }
 
+// Checking impacts with the car
+function checkImpact(item) {
+    let impact = false;
+    let added = 0;
+    
+    if (car.y + car.sizeY > item.y + added // Car bottom collision
+        && car.y < item.y + item.size - added // Car top collision
+        && car.x + car.sizeX - (added / 2) > item.x // Car right collision
+        && car.x + (added / 2) < item.x + item.size // Car left collision
+    ) {
+        impact = true;
+    }
+
+    return impact
+}
 
 
 
@@ -237,6 +260,8 @@ function update() {
     roadY += 2;
     curveOffset += 2; // Curve speed
     if (roadY >= 40) roadY = 0;
+
+    time++;
 }
 
 function calculateCurve(y) {
@@ -261,8 +286,6 @@ function gameLoop() {
 
     update();
     // requestAnimationFrame(gameLoop);
-
-    time++;
 }
 
 function random(min, max) {
