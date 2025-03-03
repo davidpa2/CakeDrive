@@ -36,7 +36,7 @@ var cakes = new Map();
 var cakeIdGenerator = 0;
 var generateCakeChance = 40;
 var eatenCakes = 0;
-var cakesToEat = 3;
+var cakesToEat = 36;
 var cakeSize = 35;
 
 var obstacles = new Map();
@@ -45,8 +45,8 @@ var generateObstacle = 0;
 var obstacleFrequency = 300;
 
 var generateObstacleSpeed = 4;
-var minObstacleSize = 30;
-var maxObstacleSize = 50;
+var minObstacleSize = 35;
+var maxObstacleSize = 60;
 
 let movingLeft = false;
 let movingRight = false;
@@ -333,44 +333,54 @@ function updateCurveAmplitude() {
 
 
 function drawCakeCounter() {
-    ctx.beginPath();
     ctx.font = "25px Times";
     ctx.textAlign = "left"
     ctx.fillStyle = "white";
     ctx.fillText("Tartas recogidas: " + eatenCakes, 20, 35);
-    ctx.closePath();
+}
+
+function drawAdvice() {
+    if (showAdvice) {
+        ctx.font = "7vw Times";
+        ctx.textAlign = "center"
+        ctx.fillStyle = "red";
+        ctx.fillText("Alcanza las tartas", canvas.width / 2, canvas.height / 2, canvas.width / 1.5);
+        ctx.fillText("y esquiva los obstáculos!", canvas.width / 2, canvas.height / 2 + 35, canvas.width / 1.5);
+        ctx.font = "5vw Times";
+        ctx.fillText("Toca un lado u otro de la pantalla para moverte", canvas.width / 2, canvas.height - 50, canvas.width - 40);
+    }
 }
 
 function win() {
-    ctx.beginPath();
     ctx.font = "8vw Times";
     ctx.textAlign = "center"
     ctx.fillStyle = "red";
     ctx.fillText("¡Muchísimas felicidades!", canvas.width / 2, canvas.height / 2 - 50, canvas.width);
     ctx.fillText("¡36 tartas, 36 años!", canvas.width / 2, canvas.height / 2 + 50, canvas.width);
-    ctx.closePath();
 }
 
 function lose() {
-    ctx.beginPath();
+    showAdvice = false;
+
     ctx.font = "13vw Times";
     ctx.textAlign = "center"
     ctx.fillStyle = "red";
     ctx.fillText("¡Has perdido!", canvas.width / 2, canvas.height / 2 - 20, canvas.width);
-    ctx.closePath();
 }
 
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     moving()
-
+    
     drawRoad();
     drawCar();
     drawCakes();
     drawObstacles();
-
+    
     drawCakeCounter();
+
+    drawAdvice();
 
     update();
 
@@ -384,6 +394,7 @@ function gameLoop() {
         lose();
     }
 
+    ctx.imageSmoothingQuality = "high";
     // requestAnimationFrame(gameLoop);
 }
 
