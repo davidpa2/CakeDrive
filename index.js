@@ -17,6 +17,12 @@ var car = new Car(canvas.width / 2 - 20, canvas.height / 1.35, 4, 4, 60, 100, 15
 // Images
 var carImg = new Image();
 carImg.src = "Car.png";
+var obstacleImgBanana = new Image();
+obstacleImgBanana.src = "banana.png";
+var obstacleImgRice = new Image();
+obstacleImgRice.src = "rice.png";
+var obstacleImgWheel = new Image();
+obstacleImgWheel.src = "wheel.png";
 var cakeImg = new Image();
 cakeImg.src = "cake.png";
 //---------------
@@ -28,10 +34,19 @@ const penaltySpeed = 0.8; // If car is off road, it will be applyed
 
 var cakes = new Map();
 var cakeIdGenerator = 0;
-var generateCakeChance = 25;
+var generateCakeChance = 40;
 var eatenCakes = 0;
 var cakesToEat = 36;
 var cakeSize = 35;
+
+var obstacles = new Map();
+var obstacleIdGenerator = 0;
+var generateObstacle = 0;
+var obstacleFrequency = 300;
+
+var generateObstacleSpeed = 4;
+var minObstacleSize = 30;
+var maxObstacleSize = 50;
 
 let movingLeft = false;
 let movingRight = false;
@@ -212,9 +227,9 @@ function isOffRoad() {
 function drawCakes() {
     for (const [key, cake] of cakes) {
         ctx.beginPath();
-        ctx.drawImage(cakeImg, cake.x, cake.y, cake.size, cake.size);
+        ctx.drawImage(cakeImg, cake.x, cake.y, cake.sizeX, cake.sizeY);
         ctx.closePath();
-        cake.y += cake.speed // Increase its Y position to rise the cake
+        cake.y += cake.speed // Increase its Y position to move the cake
 
         // If the cake beats the bottom bound, delete it
         if (cake.y > canvas.height) {
@@ -225,17 +240,46 @@ function drawCakes() {
             showAdvice = false;
             cakes.delete(key)
             eatenCakes++;
-            console.log(eatenCakes);
         }
     }
 
     // Generate a cake
     if (generateCakeChance > random(0, 10000)) {
-        let cake = new Cake(random(0, canvas.width - 220), 0, random(2, 5), cakeSize);
+        let cake = new Cake(random(0, canvas.width - cakeSize), 0, random(2, 5), cakeSize, cakeSize);
         cakes.set(cakeIdGenerator, cake);
 
         cakeIdGenerator++;
     }
+}
+
+function drawObstacles() {
+    for (const [key, obstacle] of obstacles) {
+        ctx.beginPath();
+        ctx.drawImage(obstacle.image, obstacle.x + calculateCurve(obstacle.y), obstacle.y, obstacle.sizeX, obstacle.sizeY);
+        ctx.closePath();
+        obstacle.y += obstacle.speed // Increase its Y position to move the cloud
+
+        // If the cake beats the bottom bound, delete it
+        if (obstacle.y > canvas.height) {
+            obstacles.delete(key);
+        }
+
+        if (!theEnd) {
+            theEnd = checkImpact(obstacle);
+        }
+    }
+
+    // Generate an obstacle
+    if (generateObstacle == obstacleFrequency) {
+        let obstacleSize = random(minObstacleSize, maxObstacleSize);
+        let obstacle = new Obstacle(random(obstacleSize, canvas.width - obstacleSize * 2), 0, generateObstacleSpeed, obstacleSize, obstacleSize, randomObstacleImg());
+        obstacles.set(obstacleIdGenerator, obstacle);
+        
+        obstacleIdGenerator++;
+        generateObstacle = 0;
+    }
+
+    generateObstacle++;
 }
 
 // Checking impacts with the car
@@ -244,9 +288,9 @@ function checkImpact(item) {
     let added = 0;
     
     if (car.y + car.sizeY > item.y + added // Car bottom collision
-        && car.y < item.y + item.size - added // Car top collision
+        && car.y < item.y + item.sizeY - added // Car top collision
         && car.x + car.sizeX - (added / 2) > item.x // Car right collision
-        && car.x + (added / 2) < item.x + item.size // Car left collision
+        && car.x + (added / 2) < item.x + item.sizeX // Car left collision
     ) {
         impact = true;
     }
@@ -254,6 +298,18 @@ function checkImpact(item) {
     return impact
 }
 
+function randomObstacleImg() {
+    let number = random(0,2); 
+    
+    switch (number) {
+        case 0:
+            return obstacleImgBanana;
+        case 1:
+            return obstacleImgRice;
+        case 2:
+            return obstacleImgWheel;
+    }
+}
 
 
 function update() {
@@ -295,6 +351,7 @@ function gameLoop() {
     drawRoad();
     drawCar();
     drawCakes();
+    drawObstacles();
 
     drawCakeCounter();
 
