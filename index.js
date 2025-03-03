@@ -36,7 +36,7 @@ var cakes = new Map();
 var cakeIdGenerator = 0;
 var generateCakeChance = 40;
 var eatenCakes = 0;
-var cakesToEat = 36;
+var cakesToEat = 3;
 var cakeSize = 35;
 
 var obstacles = new Map();
@@ -341,7 +341,24 @@ function drawCakeCounter() {
     ctx.closePath();
 }
 
+function win() {
+    ctx.beginPath();
+    ctx.font = "8vw Times";
+    ctx.textAlign = "center"
+    ctx.fillStyle = "red";
+    ctx.fillText("¡Muchísimas felicidades!", canvas.width / 2, canvas.height / 2 - 50, canvas.width);
+    ctx.fillText("¡36 tartas, 36 años!", canvas.width / 2, canvas.height / 2 + 50, canvas.width);
+    ctx.closePath();
+}
 
+function lose() {
+    ctx.beginPath();
+    ctx.font = "13vw Times";
+    ctx.textAlign = "center"
+    ctx.fillStyle = "red";
+    ctx.fillText("¡Has perdido!", canvas.width / 2, canvas.height / 2 - 20, canvas.width);
+    ctx.closePath();
+}
 
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -356,6 +373,17 @@ function gameLoop() {
     drawCakeCounter();
 
     update();
+
+    if (cakesToEat == eatenCakes) {
+        win();
+        clearInterval(game);
+    }
+
+    if (theEnd) {
+        clearInterval(game);
+        lose();
+    }
+
     // requestAnimationFrame(gameLoop);
 }
 
