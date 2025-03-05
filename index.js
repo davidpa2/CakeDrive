@@ -319,16 +319,18 @@ function checkLevel() {
             break;
 
         case 20:
-            obstacleFrequency = 650;
+            obstacleFrequency = 300;
             generateObstacle = 0;
-            maxCloudSize = 300;
+            minObstacleSize = 50;
+            maxObstacleSize = 80;
             break;
 
         case 30:
             generateObstacleSpeed = 7;
-            obstacleFrequency = 800;
+            obstacleFrequency = 200;
             generateObstacle = 0;
-            maxCloudSize = 360;
+            minObstacleSize = 60;
+            maxObstacleSize = 90;
             break;
     }
 }
