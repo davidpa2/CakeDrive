@@ -42,11 +42,11 @@ var cakeSize = 35;
 var obstacles = new Map();
 var obstacleIdGenerator = 0;
 var generateObstacle = 0;
-var obstacleFrequency = 400;
+var obstacleFrequency = 150;
 
 var generateObstacleSpeed = 4;
-var minObstacleSize = 35;
-var maxObstacleSize = 60;
+var minObstacleSize = 30;
+var maxObstacleSize = 40;
 
 let movingLeft = false;
 let movingRight = false;
@@ -315,22 +315,22 @@ function checkLevel() {
     switch (eatenCakes) {
         case 10:
             generateObstacleSpeed = 5;
-            maxObstacleSize = 75;
+            maxObstacleSize = 45;
             break;
 
         case 20:
-            obstacleFrequency = 300;
+            obstacleFrequency = 100;
             generateObstacle = 0;
-            minObstacleSize = 50;
-            maxObstacleSize = 80;
+            minObstacleSize = 40;
+            maxObstacleSize = 50;
             break;
 
         case 30:
             generateObstacleSpeed = 7;
-            obstacleFrequency = 200;
+            obstacleFrequency = 80;
             generateObstacle = 0;
-            minObstacleSize = 60;
-            maxObstacleSize = 90;
+            minObstacleSize = 50;
+            maxObstacleSize = 60;
             break;
     }
 }
