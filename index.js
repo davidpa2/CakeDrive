@@ -42,7 +42,7 @@ var cakeSize = 35;
 var obstacles = new Map();
 var obstacleIdGenerator = 0;
 var generateObstacle = 0;
-var obstacleFrequency = 300;
+var obstacleFrequency = 400;
 
 var generateObstacleSpeed = 4;
 var minObstacleSize = 35;
@@ -311,6 +311,27 @@ function randomObstacleImg() {
     }
 }
 
+function checkLevel() {
+    switch (eatenCakes) {
+        case 10:
+            generateObstacleSpeed = 5;
+            maxObstacleSize = 75;
+            break;
+
+        case 20:
+            obstacleFrequency = 650;
+            generateObstacle = 0;
+            maxCloudSize = 300;
+            break;
+
+        case 30:
+            generateObstacleSpeed = 7;
+            obstacleFrequency = 800;
+            generateObstacle = 0;
+            maxCloudSize = 360;
+            break;
+    }
+}
 
 function update() {
     roadY += 2;
@@ -381,6 +402,8 @@ function gameLoop() {
     drawCakeCounter();
 
     drawAdvice();
+
+    checkLevel();
 
     update();
 
