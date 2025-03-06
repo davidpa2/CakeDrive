@@ -87,21 +87,25 @@ function arrowEvent(e) {
 // Pointer Events
 (function (element, events) {
     events.forEach(e => element.addEventListener(e, clickEvent, false))
-})(document, ["pointerdown", "pointerup"])
+})(document, ["pointerdown", "pointerup", "pointermove", "pointerout"])
 function clickEvent(e) {
     switch (e.type) {
         case "pointerdown":
+        case "pointermove":
             if (e.x < canvas.width / 2) {
                 if (car.x > 10) {
                     movingLeft = true;
                 }
+                console.log("left");
             } else {
                 if (car.x + car.sizeX + 10 < canvas.width) {
                     movingRight = true;
                 }
+                console.log("right");
             }
             break;
         case "pointerup":
+        case "pointerout":
             movingRight = false;
             movingLeft = false;
             break;
