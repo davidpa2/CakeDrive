@@ -35,7 +35,7 @@ const penaltySpeed = 0.8; // If car is off road, it will be applyed
 var cakes = new Map();
 var cakeIdGenerator = 0;
 var generateCakeChance = 40;
-var eatenCakes = 0;
+var eatenCakes = 35;
 var cakesToEat = 36;
 var cakeSize = 35;
 
@@ -96,20 +96,20 @@ function clickEvent(e) {
                 if (car.x > 10) {
                     movingLeft = true;
                 }
-                console.log("left");
             } else {
                 if (car.x + car.sizeX + 10 < canvas.width) {
                     movingRight = true;
                 }
-                console.log("right");
             }
             break;
+
         case "pointerup":
         case "pointerout":
             movingRight = false;
             movingLeft = false;
             break;
     }
+
     if (theEnd) {
         window.location.reload();
     }
@@ -367,6 +367,8 @@ function drawCakeCounter() {
 }
 
 function drawAdvice() {
+    console.log(showAdvice);
+    
     if (showAdvice) {
         ctx.font = "7vw Times";
         ctx.textAlign = "center"
@@ -379,16 +381,40 @@ function drawAdvice() {
 }
 
 function win() {
+    let carWidth = car.sizeX * 3;
+    let carHeight = car.sizeY * 3;
+    let centerX = (canvas.width - carWidth) / 2;
+    let centerY = (canvas.height - carHeight) / 1.1;
+
+    ctx.beginPath();
+    ctx.save(); // Save the state of canvas
+    
+    ctx.translate(centerX + carWidth / 2, centerY + carHeight / 2); // Traslate the origin of rotation to the center of the car
+    ctx.rotate((15 * Math.PI) / 180);
+    // Draw centered car
+    ctx.drawImage(carImg, -carWidth / 2, -carHeight / 2, carWidth, carHeight);
+    
+    //Cakes counter at car
+    ctx.font = "20vw Times";
+    ctx.textAlign = "center"
+    ctx.fillText(cakesToEat, 0, carHeight / 4);
+
+    ctx.restore(); // Restore canvas rotation
+
     ctx.font = "8vw Times";
     ctx.textAlign = "center"
     ctx.fillStyle = "red";
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 0.5;
     ctx.fillText("¡Muchísimas felicidades!", canvas.width / 2, canvas.height / 2 - 50, canvas.width);
-    ctx.fillText("¡36 tartas, 36 años!", canvas.width / 2, canvas.height / 2 + 50, canvas.width);
+    ctx.strokeText("¡Muchísimas felicidades!", canvas.width / 2, canvas.height / 2 - 50, canvas.width);
+    ctx.fillText(`¡${cakesToEat} tartas, ${cakesToEat} años`, canvas.width / 2, canvas.height / 2 + 50, canvas.width);
+    ctx.strokeText(`¡${cakesToEat} tartas, ${cakesToEat} años`, canvas.width / 2, canvas.height / 2 + 50, canvas.width);
+
+    ctx.closePath();
 }
 
 function lose() {
-    showAdvice = false;
-
     ctx.font = "13vw Times";
     ctx.textAlign = "center"
     ctx.fillStyle = "red";
