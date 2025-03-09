@@ -5,7 +5,7 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 let roadY = 0;
-let roadWidth = 280;
+let roadWidth = 290;
 
 let curveOffset = 0;
 let curveAmplitude = 40;
@@ -35,7 +35,7 @@ const penaltySpeed = 0.8; // If car is off road, it will be applyed
 var cakes = new Map();
 var cakeIdGenerator = 0;
 var generateCakeChance = 40;
-var eatenCakes = 35;
+var eatenCakes = 0;
 var cakesToEat = 36;
 var cakeSize = 35;
 
@@ -45,8 +45,8 @@ var generateObstacle = 0;
 var obstacleFrequency = 150;
 
 var generateObstacleSpeed = 4;
-var minObstacleSize = 30;
-var maxObstacleSize = 40;
+var minObstacleSize = 25;
+var maxObstacleSize = 35;
 
 let movingLeft = false;
 let movingRight = false;
@@ -80,7 +80,7 @@ function arrowEvent(e) {
             }
             break;
     }
-    if (theEnd) {
+    if (lost) {
         window.location.reload();
     }
 }
@@ -111,7 +111,7 @@ function clickEvent(e) {
             break;
     }
 
-    if (theEnd) {
+    if (lost) {
         window.location.reload();
     }
 }
@@ -142,7 +142,9 @@ function drawRoad() {
     for (let y = 0; y < canvas.height; y += 10) {
         let curve = calculateCurve(y); // Curve movement
 
-        let leftX = 115 + curve - 50;
+        let centerX = canvas.width / 2;  // Canvas center
+
+        let leftX = centerX - roadWidth / 2 + curve;   // Calcula el borde izquierdo centrado
         let rightX = leftX + roadWidth;
 
         ctx.beginPath();
@@ -243,16 +245,20 @@ function drawCakes() {
         }
 
         if (checkImpact(cake)) {
+            roadWidth -= 2;
             showAdvice = false;
             cakes.delete(key)
             eatenCakes++;
-            theEnd = true;
+            // theEnd = true;
         }
     }
 
     // Generate a cake
     if (generateCakeChance > random(0, 10000)) {
-        let cake = new Cake(random(0, canvas.width - cakeSize), 0, random(2, 5), cakeSize, cakeSize);
+        let offset = (canvas.width / 2) - (roadWidth / 2);
+
+        // let cake = new Cake(random(0, canvas.width - cakeSize), 0, random(2, 5), cakeSize, cakeSize);
+        let cake = new Cake(random(offset, canvas.width - offset), 0, random(2, 5), cakeSize, cakeSize);
         cakes.set(cakeIdGenerator, cake);
 
         cakeIdGenerator++;
@@ -324,22 +330,21 @@ function checkLevel() {
     switch (eatenCakes) {
         case 10:
             generateObstacleSpeed = 5;
-            maxObstacleSize = 45;
+            maxObstacleSize = 40;
             break;
 
         case 20:
             obstacleFrequency = 100;
             generateObstacle = 0;
-            minObstacleSize = 40;
-            maxObstacleSize = 50;
+            minObstacleSize = 30;
             break;
 
         case 30:
             generateObstacleSpeed = 7;
             obstacleFrequency = 80;
             generateObstacle = 0;
-            minObstacleSize = 50;
-            maxObstacleSize = 60;
+            minObstacleSize = 35;
+            maxObstacleSize = 45;
             break;
     }
 }
@@ -380,8 +385,8 @@ function drawAdvice() {
         ctx.textAlign = "center"
         ctx.fillStyle = "red";
         ctx.strokeStyle = "white";
-        ctx.fillText("Alcanza las tartas", canvas.width / 2, canvas.height / 2, canvas.width / 1.5);
-        ctx.strokeText("Alcanza las tartas", canvas.width / 2, canvas.height / 2, canvas.width / 1.5);
+        ctx.fillText("¡Alcanza las tartas", canvas.width / 2, canvas.height / 2, canvas.width / 1.5);
+        ctx.strokeText("¡Alcanza las tartas", canvas.width / 2, canvas.height / 2, canvas.width / 1.5);
         ctx.fillText("y esquiva los obstáculos!", canvas.width / 2, canvas.height / 2 + 35, canvas.width / 1.5);
         ctx.strokeText("y esquiva los obstáculos!", canvas.width / 2, canvas.height / 2 + 35, canvas.width / 1.5);
         ctx.font = "5vw Times";
@@ -418,12 +423,12 @@ function win() {
     ctx.lineWidth = 0.5;
     ctx.fillText("¡Muchísimas felicidades!", canvas.width / 2, canvas.height / 2 - 50, canvas.width);
     ctx.strokeText("¡Muchísimas felicidades!", canvas.width / 2, canvas.height / 2 - 50, canvas.width);
-    ctx.fillText(`¡${cakesToEat} tartas, ${cakesToEat} años`, canvas.width / 2, canvas.height / 2 + 50, canvas.width);
-    ctx.strokeText(`¡${cakesToEat} tartas, ${cakesToEat} años`, canvas.width / 2, canvas.height / 2 + 50, canvas.width);
+    ctx.fillText(`¡${cakesToEat} tartas, ${cakesToEat} años!`, canvas.width / 2, canvas.height / 2 + 50, canvas.width);
+    ctx.strokeText(`¡${cakesToEat} tartas, ${cakesToEat} años!`, canvas.width / 2, canvas.height / 2 + 50, canvas.width);
 
     ctx.closePath();
 
-    drawCar();
+    // drawCar();
 }
 
 function lose() {
