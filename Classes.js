@@ -11,7 +11,8 @@ class Car {
 }
 
 class Cake {
-    constructor(x, y, speed, sizeX, sizeY) {
+    constructor(id, x, y, speed, sizeX, sizeY) {
+        this.id = id;
         this.x = x
         this.y = y
         this.speed = speed

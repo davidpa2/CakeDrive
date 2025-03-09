@@ -258,7 +258,7 @@ function drawCakes() {
         let offset = (canvas.width / 2) - (roadWidth / 2);
 
         // let cake = new Cake(random(0, canvas.width - cakeSize), 0, random(2, 5), cakeSize, cakeSize);
-        let cake = new Cake(random(offset, canvas.width - offset), 0, random(2, 5), cakeSize, cakeSize);
+        let cake = new Cake(cakeIdGenerator, random(offset, canvas.width - offset), 0, random(2, 5), cakeSize, cakeSize);
         cakes.set(cakeIdGenerator, cake);
 
         cakeIdGenerator++;
@@ -396,7 +396,9 @@ function drawAdvice() {
 }
 
 function win() {
+    theEnd = true;
     generateCakeChance = 800;
+    canvas.addEventListener("click", click, false);
     won = setInterval(winLoop, 15);
 }
 
@@ -477,6 +479,11 @@ function drawWinCar() {
 
     ctx.restore(); // Restore canvas rotation
 
+    //Draw the different obstacles
+    ctx.drawImage(obstacleImgRice, canvas.width / 1.5, canvas.height / 4, 80, 80);
+    ctx.drawImage(obstacleImgBanana, canvas.width / 2, canvas.height / 10, 80, 80);
+    ctx.drawImage(obstacleImgWheel, canvas.width / 5, canvas.height / 4.5, 80, 80);
+
     ctx.font = "8vw Times";
     ctx.textAlign = "center"
     ctx.fillStyle = "red";
@@ -506,13 +513,26 @@ function drawWinCakes() {
     // Generate a cake
     if (generateCakeChance > random(0, 10000)) {
         let offset = 10;
-        let cake = new Cake(random(offset, canvas.width - offset - cakeSize), 0, random(2, 5), cakeSize, cakeSize);
+        let cake = new Cake(cakeIdGenerator, random(offset, canvas.width - offset - cakeSize), 0, random(2, 5), cakeSize, cakeSize);
         cakes.set(cakeIdGenerator, cake);
 
         cakeIdGenerator++;
     }
 }
 
+/**
+ * That event is just for the end of the game, to be able to touch the cakes and remove them
+ * @param {*} e 
+ */
+function click(e) {
+    if (theEnd) {
+        cakes.forEach(cake => {
+            if ((e.x > cake.x && e.x < cake.x + 50) && (e.y > cake.y && e.y < cake.y + 50)) {//
+                cakes.delete(cake.id);
+            }
+        })
+    }
+}
 
 function random(min, max) {
     const num = Math.floor(Math.random() * (max - min + 1)) + min;
