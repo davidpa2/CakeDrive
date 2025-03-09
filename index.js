@@ -302,7 +302,7 @@ function drawObstacles() {
 // Checking impacts with the car
 function checkImpact(item) {
     let impact = false;
-    let added = 0;
+    let added = item.sizeX / 6;
     
     if (car.y + car.sizeY > item.y + added // Car bottom collision
         && car.y < item.y + item.sizeY - added // Car top collision
@@ -393,7 +393,6 @@ function drawAdvice() {
         ctx.strokeText("y esquiva los obstáculos!", canvas.width / 2, canvas.height / 2 + 35, canvas.width / 1.5);
         ctx.font = "5vw Times";
         ctx.fillText("Toca un lado u otro de la pantalla para moverte", canvas.width / 2, canvas.height - 50, canvas.width - 40);
-        ctx.strokeText("Toca un lado u otro de la pantalla para moverte", canvas.width / 2, canvas.height - 50, canvas.width - 40);
     }
 }
 
@@ -456,7 +455,7 @@ function winLoop() {
 
 function drawWinBackground() {
     ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, canvas.width, canvas.height); // Green background (grass)
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
 function drawWinCar() {
