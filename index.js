@@ -53,6 +53,7 @@ let movingRight = false;
 
 var showAdvice = true;
 let theEnd = false;
+let lost = false;
 
 gameLoop();
 var game = setInterval(gameLoop, 15);
@@ -186,6 +187,7 @@ function drawCar() {
 
     //Cakes counter at car
     ctx.font = "25px Times";
+    ctx.fillStyle = "white";
     ctx.textAlign = "center"
     ctx.fillText(eatenCakes, -car.sizeX / 53, car.sizeY / 3.8);
 
@@ -244,6 +246,7 @@ function drawCakes() {
             showAdvice = false;
             cakes.delete(key)
             eatenCakes++;
+            theEnd = true;
         }
     }
 
@@ -268,8 +271,10 @@ function drawObstacles() {
             obstacles.delete(key);
         }
 
-        if (!theEnd) {
-            theEnd = checkImpact(obstacle);
+        if (checkImpact(obstacle)) {
+            showAdvice = false;
+            theEnd = true;
+            lost = true;
         }
     }
 
@@ -360,23 +365,28 @@ function updateCurveAmplitude() {
 
 
 function drawCakeCounter() {
-    ctx.font = "25px Times";
-    ctx.textAlign = "left"
-    ctx.fillStyle = "white";
-    ctx.fillText("Tartas recogidas: " + eatenCakes, 20, 35);
+    if (!theEnd) {
+        ctx.font = "25px Times";
+        ctx.textAlign = "left"
+        ctx.fillStyle = "white";
+        ctx.fillText("Tartas recogidas: " + eatenCakes, 20, 35);
+    }
 }
 
 function drawAdvice() {
-    console.log(showAdvice);
-    
     if (showAdvice) {
         ctx.font = "7vw Times";
+        ctx.lineWidth = 0.5;
         ctx.textAlign = "center"
         ctx.fillStyle = "red";
+        ctx.strokeStyle = "white";
         ctx.fillText("Alcanza las tartas", canvas.width / 2, canvas.height / 2, canvas.width / 1.5);
+        ctx.strokeText("Alcanza las tartas", canvas.width / 2, canvas.height / 2, canvas.width / 1.5);
         ctx.fillText("y esquiva los obstáculos!", canvas.width / 2, canvas.height / 2 + 35, canvas.width / 1.5);
+        ctx.strokeText("y esquiva los obstáculos!", canvas.width / 2, canvas.height / 2 + 35, canvas.width / 1.5);
         ctx.font = "5vw Times";
         ctx.fillText("Toca un lado u otro de la pantalla para moverte", canvas.width / 2, canvas.height - 50, canvas.width - 40);
+        ctx.strokeText("Toca un lado u otro de la pantalla para moverte", canvas.width / 2, canvas.height - 50, canvas.width - 40);
     }
 }
 
@@ -412,13 +422,20 @@ function win() {
     ctx.strokeText(`¡${cakesToEat} tartas, ${cakesToEat} años`, canvas.width / 2, canvas.height / 2 + 50, canvas.width);
 
     ctx.closePath();
+
+    drawCar();
 }
 
 function lose() {
     ctx.font = "13vw Times";
     ctx.textAlign = "center"
     ctx.fillStyle = "red";
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 0.5;
     ctx.fillText("¡Has perdido!", canvas.width / 2, canvas.height / 2 - 20, canvas.width);
+    ctx.strokeText("¡Has perdido!", canvas.width / 2, canvas.height / 2 - 20, canvas.width);
+
+    drawCar(); // Finally, refresh state of the car
 }
 
 function gameLoop() {
@@ -444,7 +461,7 @@ function gameLoop() {
         clearInterval(game);
     }
 
-    if (theEnd) {
+    if (lost) {
         clearInterval(game);
         lose();
     }
