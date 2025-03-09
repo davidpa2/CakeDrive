@@ -35,7 +35,7 @@ const penaltySpeed = 0.8; // If car is off road, it will be applyed
 var cakes = new Map();
 var cakeIdGenerator = 0;
 var generateCakeChance = 40;
-var eatenCakes = 35;
+var eatenCakes = 0;
 var cakesToEat = 36;
 var cakeSize = 35;
 
@@ -286,8 +286,10 @@ function drawObstacles() {
 
     // Generate an obstacle
     if (generateObstacle == obstacleFrequency) {
+        let offset = (canvas.width / 2) - (roadWidth / 2);
+
         let obstacleSize = random(minObstacleSize, maxObstacleSize);
-        let obstacle = new Obstacle(random(obstacleSize, canvas.width - obstacleSize * 2), 0, generateObstacleSpeed, obstacleSize, obstacleSize, randomObstacleImg());
+        let obstacle = new Obstacle(random(offset, canvas.width - offset), 0, generateObstacleSpeed, obstacleSize, obstacleSize, randomObstacleImg());
         obstacles.set(obstacleIdGenerator, obstacle);
         
         obstacleIdGenerator++;
