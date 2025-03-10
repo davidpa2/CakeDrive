@@ -46,7 +46,7 @@ var obstacleFrequency = 150;
 
 var generateObstacleSpeed = 4;
 var minObstacleSize = 25;
-var maxObstacleSize = 35;
+var maxObstacleSize = 30;
 
 let movingLeft = false;
 let movingRight = false;
@@ -332,7 +332,7 @@ function checkLevel() {
     switch (eatenCakes) {
         case 10:
             generateObstacleSpeed = 5;
-            maxObstacleSize = 40;
+            maxObstacleSize = 35;
             break;
 
         case 20:
@@ -346,7 +346,7 @@ function checkLevel() {
             obstacleFrequency = 80;
             generateObstacle = 0;
             minObstacleSize = 35;
-            maxObstacleSize = 45;
+            maxObstacleSize = 40;
             break;
     }
 }
