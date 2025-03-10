@@ -342,7 +342,7 @@ function checkLevel() {
             break;
 
         case 30:
-            generateObstacleSpeed = 7;
+            generateObstacleSpeed = 6;
             obstacleFrequency = 80;
             generateObstacle = 0;
             minObstacleSize = 35;
