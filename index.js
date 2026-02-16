@@ -160,7 +160,7 @@ function drawRoad() {
     ctx.fillStyle = "white";
     for (let y = 0; y < canvas.height; y += 50) { // The y increment is for the lines separation
         let curve = calculateCurve(y);
-        let centerX = 225 + curve;
+        let centerX = canvas.width / 2 + curve + 15;
         ctx.fillRect(centerX - 20, (y + roadY - 30) % canvas.height, 8, 15);
     }
 }
